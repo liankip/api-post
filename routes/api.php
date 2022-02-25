@@ -14,9 +14,13 @@ Route::group(['prefix' => 'v1'], function ($router) {
     });
 
     Route::group(['prefix' => 'post'], function ($router) {
-        Route::get('/', [PostController::class, 'show']);
+        Route::get('/', [PostController::class, 'show'])->middleware(
+            'auth:api'
+        );
 
-        Route::get('/{id}', [PostController::class, 'index']);
+        Route::get('/{id}', [PostController::class, 'index'])->middleware(
+            'auth:api'
+        );
 
         Route::post('/', [PostController::class, 'store'])->middleware(
             'auth.role:writer'

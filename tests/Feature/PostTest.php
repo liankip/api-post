@@ -13,12 +13,16 @@ class PostTest extends TestCase
     use DatabaseTransactions;
 
     /** @test */
-    public function test_posts_no_paramaters_and_no_token_then_response_success()
+    public function test_posts_when_visitor_see_post_and_no_params_then_response_success()
     {
+        $user = User::where('role', 'visitor')->first();;
+        $token = JWTAuth::fromUser($user);
+
         $baseUrl = Config::get('app.url') . '/api/v1/post';
 
         $response = $this->json('GET', $baseUrl . '/', (array)'', [
             'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token,
         ]);
 
         $response->assertStatus(200)
@@ -39,13 +43,17 @@ class PostTest extends TestCase
     }
 
     /** @test */
-    public function test_post_when_params_id_valid_and_no_token_then_response_success()
+    public function test_post_when_writer_see_post_and_params_id_valid_then_response_success()
     {
+        $user = User::where('role', 'writer')->first();;
+        $token = JWTAuth::fromUser($user);
+
         $id = 1;
         $baseUrl = Config::get('app.url') . '/api/v1/post/' . $id;
 
         $response = $this->json('GET', $baseUrl . '/', (array)'', [
             'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token,
         ]);
 
         $response->assertStatus(200)
